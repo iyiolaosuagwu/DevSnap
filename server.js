@@ -54,5 +54,6 @@ const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`App started on ${port}`));
 
+
 // jsonbewton creates the token
 // passport and passport-jwt valites it and expracts the user info from it
