@@ -16,7 +16,6 @@ router.get('/test', (req, res) => res.json({
 }));
 
 
-
 // @route   GET api/posts
 // @desc    Get posts
 // @access  Public
@@ -132,9 +131,11 @@ router.post(
       Post.findById(req.params.id)
         .then(post => {
           // check to see if user already liked the post
-          if ( post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
+          if (post.likes.filter(like => like.user.toString() === req.user.id).length > 0) {
             return res
-              .status(400).json({alreadyliked: 'User already liked this post'});
+              .status(400).json({
+                alreadyliked: 'User already liked this post'
+              });
           }
 
           // Add user id to likes array

@@ -4,6 +4,7 @@ const isEmpty = require('./is-empty');
 // data is the value passed in to inputs
 // eg info
 module.exports = function validateRegisterInput(data) {
+  // initialize empty Obj to pass errors into
   let errors = {};
 
 
@@ -15,10 +16,10 @@ module.exports = function validateRegisterInput(data) {
   data.password2 = !isEmpty(data.password2) ? data.password2 : '';
 
   if (!Validator.isLength(data.name, {
-      min: 2,
+      min: 4,
       max: 30
     })) {
-    errors.name = 'Name must be between 2 and 30 characters';
+    errors.name = 'Name must be between 4 and 30 characters';
   }
 
   if (Validator.isEmpty(data.name)) {
@@ -29,19 +30,23 @@ module.exports = function validateRegisterInput(data) {
     errors.email = 'Email field is required';
   }
 
-  if (!Validator.isEmail(data.email)) {
-    errors.email = 'Email is invalid';
+  if (data.email) {
+    if (!Validator.isEmail(data.email)) {
+      errors.email = 'Email is invalid';
+    }
   }
 
   if (Validator.isEmpty(data.password)) {
     errors.password = 'Password field is required';
   }
 
-  if (!Validator.isLength(data.password, {
-      min: 6,
-      max: 30
-    })) {
-    errors.password = 'Password must be at least 6 characters';
+  if (data.password) {
+    if (!Validator.isLength(data.password, {
+        min: 6,
+        max: 30
+      })) {
+      errors.password = 'Password must be at least 6 characters';
+    }
   }
 
   if (Validator.isEmpty(data.password2)) {

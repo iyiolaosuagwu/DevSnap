@@ -15,6 +15,7 @@ const validateLoginInput = require('../../validation/login');
 // Load User Model
 const User = require('../../models/User');
 
+
 // @route GET api/users/test
 // @desc Tests users route
 // @access Public route
@@ -25,9 +26,9 @@ router.get('/test', (req, res) =>
 );
 
 
-// @route GET api/users/register
-// @desc Register user
-// @access Public
+// @route   POST api/users/register
+// @desc    Register user
+// @access  Public
 router.post('/register', (req, res) => {
 
   const {
@@ -41,47 +42,39 @@ router.post('/register', (req, res) => {
   }
 
   User.findOne({
-      email: req.body.email
-    })
-    // get user
-    .then(user => {
-      // checking if user exist with the
-      if (user) {
-        return res.status(400).json({
-          email: 'Email Already Exists'
-        });
-      } else {
-        const avatar = gravatar.url(req.body.email, {
-          s: '200', // size
-          r: 'pg', //Rating
-          d: 'mm' // default
-        });
+    email: req.body.email
+  }).then(user => {
+    // check for user
+    if (user) {
+      errors.email = 'Email already exists';
+      return res.status(400).json(errors);
+    } else {
+      const avatar = gravatar.url(req.body.email, {
+        s: '200', // Size
+        r: 'pg', // Rating
+        d: 'mm' // Default
+      });
 
-        const newUser = new User({
-          name: req.body.name,
-          email: req.body.email,
-          avatar,
-          password: req.body.password
-        });
+      const newUser = new User({
+        name: req.body.name,
+        email: req.body.email,
+        avatar, // es6 syntax
+        password: req.body.password
+      });
 
-        // hashing password
-
-        bcrypt.genSalt(10, (err, salt) => {
-          // hash the (User password)
-          bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if (err) throw err;
-            // set User password to the hashed password
-            newUser.password = hash;
-            // save user
-            newUser
-              .save()
-              // gives or check for created user
-              .then(user => res.json(user))
-              .catch(err => console.log(err));
-          });
+      // Hash password
+      bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(newUser.password, salt, (err, hash) => {
+          if (err) throw err;
+          // set newUser password to the hashde password
+          newUser.password = hash;
+          newUser.save()
+            .then(user => res.json(user))
+            .catch(err => console.log(err));
         });
-      }
-    });
+      });
+    }
+  });
 });
 
 
@@ -126,8 +119,9 @@ router.post('/login', (req, res) => {
             id: user.id,
             name: user.name,
             avatar: user.avatar
-          }; //Create JWT payload
+          };
 
+          //Create JWT payload
           // Sign Token
           jwt.sign(
             payload,

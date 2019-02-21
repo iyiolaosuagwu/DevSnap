@@ -23,8 +23,14 @@ const UserSchema = new Schema({
   date: {
     type: Date,
     default: Date.now
+  },
+  loggedInTime: {
+    type: Date,
+    default: Date.now
   }
 });
+
+
 
 // access model as User 
 // users as the collection name
